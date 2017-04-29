@@ -92,6 +92,19 @@
     "preact-router": "^2.5.1",
     "promise-polyfill": "^6.0.2",
     "proptypes": "^1.0.0",
+    "react-stockcharts": "^0.6.1",
     "serve": "^5.1.4"
-  }
+  },
+  "main": "webpack.config.babel.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karlcode/StockSentiment.git"
+  },
+  "bugs": {
+    "url": "https://github.com/karlcode/StockSentiment/issues"
+  },
+  "homepage": "https://github.com/karlcode/StockSentiment#readme"
 }
