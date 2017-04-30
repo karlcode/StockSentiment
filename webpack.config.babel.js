@@ -207,6 +207,7 @@ module.exports = {
 		historyApiFallback: true,
 		open: true,
 		proxy: {
+			
 			// OPTIONAL: proxy configuration:
 			// '/optional-prefix/**': { // path pattern to rewrite
 			//   target: 'http://target-host.com',
