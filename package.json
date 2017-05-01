@@ -86,14 +86,17 @@
     "webpack-dev-server": "^2.4.4"
   },
   "dependencies": {
+    "@amcharts/amcharts3-react": "^2.0.1",
     "preact": "^8.1.0",
     "preact-compat": "^3.15.0",
     "preact-render-to-string": "^3.6.0",
     "preact-router": "^2.5.1",
     "promise-polyfill": "^6.0.2",
     "proptypes": "^1.0.0",
-    "react-stockcharts": "^0.6.1",
-    "serve": "^5.1.4"
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "serve": "^5.1.4",
+    "victory": "^0.18.4"
   },
   "main": "webpack.config.babel.js",
   "directories": {
