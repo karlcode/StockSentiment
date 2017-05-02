@@ -1,6 +1,7 @@
 import { h, Component } from 'preact';
 import style from './style.less';
-import { VictoryCandlestick, VictoryChart } from 'victory';
+import { VictoryZoomContainer, VictoryCandlestick, VictoryChart, VictoryLine } from 'victory';
+
 
 var data2 = [
     {x: 3, open: 5, close: 10, high: 15, low: 0},
@@ -41,7 +42,6 @@ export default class Expand extends Component {
         low: arr[i][3]
       })
     }
-    console.log(data)
     this.setState({data:data})
   })
 
@@ -55,9 +55,10 @@ export default class Expand extends Component {
 			<div class={style.home}>
         
 			</div>
-       <VictoryChart>
-        <VictoryCandlestick  data={this.state.data} />
-        </VictoryChart>     
+      <VictoryChart containerComponent={<VictoryZoomContainer/>}>
+        <VictoryLine  data={this.state.data} x="x"
+         y="open" />
+      </VictoryChart>     
 			</div>
 		);
 	}
