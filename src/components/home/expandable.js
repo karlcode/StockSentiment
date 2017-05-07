@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import style from './style.less';
-import { VictoryZoomContainer, VictoryCandlestick, VictoryChart, VictoryLine } from 'victory';
+import { VictoryAxis, VictoryBrushContainer, VictoryZoomContainer, VictoryCandlestick, VictoryChart, VictoryLine } from 'victory';
 
 
 var data2 = [
@@ -23,16 +23,16 @@ export default class Expand extends Component {
 		  data: []
 		};
 	}
-	componentWillMount(){
+	componentDidMount(){
       var myInit = { method: 'GET',
                headers: myHeaders,
                mode: 'cors',
-               cache: 'default' };
+               cache: 'force-cache' };
   fetch('https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=UXBsxuWqVeC2jAzbA9xe', myInit)
   .then(res => res.json())
   .then(response =>{
-    var arr = response.dataset_data.data
-    for (var i=1200;i<arr.length;i++){
+    var arr = response.dataset_data.data.reverse()
+    for (var i=1230;i<arr.length;i++){
       data.push(
         {
         x: arr[i][0],
@@ -46,7 +46,13 @@ export default class Expand extends Component {
   })
 
   }
-	
+	handleZoom(domain) {
+    this.setState({selectedDomain: domain});
+  }
+
+  handleBrush(domain) {
+    this.setState({zoomDomain: domain});
+  }
 	
 	render() {
 
@@ -55,10 +61,47 @@ export default class Expand extends Component {
 			<div class={style.home}>
         
 			</div>
-      <VictoryChart containerComponent={<VictoryZoomContainer/>}>
+      <VictoryChart width={1000} height={400} 
+        containerComponent={<VictoryZoomContainer
+       
+        dimension="x"
+          zoomDomain={this.state.zoomDomain}
+            onDomainChange={this.handleZoom.bind(this)}/>}>
         <VictoryLine  data={this.state.data} x="x"
          y="open" />
-      </VictoryChart>     
+         <VictoryAxis
+              fixLabelOverlap={true}
+              
+              
+            />
+            
+      </VictoryChart> 
+      <VictoryChart
+            padding={{top: 0, left: 50, right: 50, bottom: 30}}
+            width={1000} height={100} scale={{x: "time"}} 
+            containerComponent={
+              <VictoryBrushContainer responsive={false}
+                dimension="x"
+                selectedDomain={this.state.selectedDomain}
+                onDomainChange={this.handleBrush.bind(this)}
+                selectionStyle={{fill: "teal", opacity: 0.2}}
+              />
+            }
+          >
+            
+            <VictoryLine
+              style={{
+                data: {stroke: "tomato"}
+              }}
+              data={this.state.data} x="x"
+         y="open"
+            />
+            <VictoryAxis
+              fixLabelOverlap={true}
+              
+              
+            />
+          </VictoryChart>    
 			</div>
 		);
 	}

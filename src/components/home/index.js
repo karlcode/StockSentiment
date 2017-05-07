@@ -7,10 +7,11 @@ export default class Home extends Component {
 	render() {
 		return (
 			<div>
+			<Expand/>
 			<div class={style.home}>
 				
 			</div>
-			<Expand/>
+			
 
 			</div>
 		);
