@@ -1,6 +1,6 @@
 import { h, Component } from 'preact';
 import style from './style.less';
-import { VictoryAxis, VictoryBrushContainer, VictoryZoomContainer, VictoryCandlestick, VictoryChart, VictoryLine } from 'victory';
+import {VictoryArea, VictoryTheme, VictoryTooltip, VictoryVoronoiContainer, VictoryAxis, VictoryBrushContainer, VictoryZoomContainer, VictoryCandlestick, VictoryChart, VictoryLine } from 'victory';
 
 
 var data2 = [
@@ -13,6 +13,8 @@ var data2 = [
   "Access-Control-Allow-Origin": "*, *",
 });
 var data = []
+var min = []
+var max = []
 
 
 export default class Expand extends Component {
@@ -20,7 +22,9 @@ export default class Expand extends Component {
      super(props);
 
      this.state = {
-		  data: []
+		  data: [],
+      min: [],
+      max: []
 		};
 	}
 	componentDidMount(){
@@ -32,7 +36,10 @@ export default class Expand extends Component {
   .then(res => res.json())
   .then(response =>{
     var arr = response.dataset_data.data.reverse()
-    for (var i=1230;i<arr.length;i++){
+       var inf = Infinity
+       var zer = 0
+    //for (var i=1200;i<arr.length;i++){
+      for (var i=arr.length-30;i<arr.length;i++){
       data.push(
         {
         x: arr[i][0],
@@ -41,8 +48,14 @@ export default class Expand extends Component {
         high: arr[i][2],
         low: arr[i][3]
       })
+      if (arr[i][4]>zer) {
+          zer = arr[i][4];
+        }
+      if (arr[i][4]<inf) {
+        inf = arr[i][4];
+      }
     }
-    this.setState({data:data})
+    this.setState({data:data, min:inf, max:zer})
   })
 
   }
@@ -55,30 +68,51 @@ export default class Expand extends Component {
   }
 	
 	render() {
-
 		return (
 			<div >
 			<div class={style.home}>
         
 			</div>
-      <VictoryChart width={1000} height={400} 
-        containerComponent={<VictoryZoomContainer
-       
-        dimension="x"
+      <VictoryChart width={1200} height={400} 
+        theme={VictoryTheme.material}
+        
+        /*containerComponent={<VictoryZoomContainer
+         dimension="x"
           zoomDomain={this.state.zoomDomain}
-            onDomainChange={this.handleZoom.bind(this)}/>}>
-        <VictoryLine  data={this.state.data} x="x"
-         y="open" />
+            onDomainChange={this.handleZoom.bind(this)}/>}*/
+            containerComponent={<VictoryVoronoiContainer dimension="x"/>}
+            >
+        <VictoryArea
+      
+       domain={{ y: [this.state.min*0.99, this.state.max*1.01]}}
+        style={{
+            data: {stroke: "tomato", opacity: 0.7, fill:"lightblue"},
+  
+          }}
+        
+        labels={(datum) => datum.close}
+        labelComponent={<VictoryTooltip renderInPortal text={(datum)=>"Close: "+datum.close}/>}
+        data={this.state.data}
+          x="x"
+            y="open" 
+            
+            />
          <VictoryAxis
               fixLabelOverlap={true}
-              
-              
+              dependentAxis={true}
+              tickFormat={(d) => (`$${d}`)}
             />
+          <VictoryAxis
+              fixLabelOverlap={true}
+              dependentAxis={false}
+             
+            />
+       
             
       </VictoryChart> 
       <VictoryChart
-            padding={{top: 0, left: 50, right: 50, bottom: 30}}
-            width={1000} height={100} scale={{x: "time"}} 
+            padding={{top: 0, left: 65,  bottom: 30}}
+            width={1000} height={100}  
             containerComponent={
               <VictoryBrushContainer responsive={false}
                 dimension="x"
@@ -94,12 +128,10 @@ export default class Expand extends Component {
                 data: {stroke: "tomato"}
               }}
               data={this.state.data} x="x"
-         y="open"
+               y="open"
             />
             <VictoryAxis
               fixLabelOverlap={true}
-              
-              
             />
           </VictoryChart>    
 			</div>
