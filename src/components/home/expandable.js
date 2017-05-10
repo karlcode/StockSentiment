@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 import style from './style.less';
 import {VictoryArea, VictoryTheme, VictoryTooltip, VictoryVoronoiContainer, VictoryAxis, VictoryBrushContainer, VictoryZoomContainer, VictoryCandlestick, VictoryChart, VictoryLine } from 'victory';
-
+import Dropdown from 'react-dropdown'
 
 var data2 = [
     {x: 3, open: 5, close: 10, high: 15, low: 0},
@@ -15,24 +15,34 @@ var data2 = [
 var data = []
 var min = []
 var max = []
+const options = [
+  'one', 'two', 'three'
+]
+const defaultOption = options[0]
 
 
 export default class Expand extends Component {
 	 constructor(props) {
      super(props);
-
+     
      this.state = {
 		  data: [],
       min: [],
-      max: []
+      max: [],
+      value: "FB"
 		};
+    this.handleChange = this.handleChange.bind(this);
+  
 	}
 	componentDidMount(){
+    var data = []
+    var min = []
+    var max = []
       var myInit = { method: 'GET',
                headers: myHeaders,
                mode: 'cors',
                cache: 'force-cache' };
-  fetch('https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=UXBsxuWqVeC2jAzbA9xe', myInit)
+  fetch('https://www.quandl.com/api/v3/datasets/WIKI/'+this.state.value+'/data.json?api_key=UXBsxuWqVeC2jAzbA9xe', myInit)
   .then(res => res.json())
   .then(response =>{
     var arr = response.dataset_data.data.reverse()
@@ -66,6 +76,13 @@ export default class Expand extends Component {
   handleBrush(domain) {
     this.setState({zoomDomain: domain});
   }
+
+   handleChange(event) {
+    this.setState({value: event.target.value});
+    this.componentDidMount()
+  }
+
+  
 	
 	render() {
 		return (
@@ -110,7 +127,10 @@ export default class Expand extends Component {
        
             
       </VictoryChart> 
-      <VictoryChart
+     
+          <input type="text"  value={this.state.value} onChange={this.handleChange} />
+         <Dropdown options={options} value={defaultOption} placeholder="Select an option" />
+      {/*<VictoryChart
             padding={{top: 0, left: 65,  bottom: 30}}
             width={1000} height={100}  
             containerComponent={
@@ -133,7 +153,7 @@ export default class Expand extends Component {
             <VictoryAxis
               fixLabelOverlap={true}
             />
-          </VictoryChart>    
+          </VictoryChart>   */}
 			</div>
 		);
 	}
