@@ -1,7 +1,8 @@
 import { h, Component } from 'preact';
 import style from './style.less';
-import {VictoryArea, VictoryTheme, VictoryTooltip, VictoryVoronoiContainer, VictoryAxis, VictoryBrushContainer, VictoryZoomContainer, VictoryCandlestick, VictoryChart, VictoryLine } from 'victory';
-import Dropdown from 'react-dropdown'
+import {VictoryLabel, VictoryArea, VictoryTheme, VictoryTooltip, VictoryVoronoiContainer, VictoryAxis, VictoryBrushContainer, VictoryZoomContainer, VictoryCandlestick, VictoryChart, VictoryLine } from 'victory';
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
 
 var data2 = [
     {x: 3, open: 5, close: 10, high: 15, low: 0},
@@ -15,11 +16,30 @@ var data2 = [
 var data = []
 var min = []
 var max = []
-const options = [
-  'one', 'two', 'three'
-]
-const defaultOption = options[0]
 
+const languages = [
+
+  {
+    ticker: 'MSFT',
+    name: 'Microsoft'
+  },
+  {
+    ticker: 'MSM',
+    name: '1972'
+  },
+  {
+    ticker: 'TSLA',
+   name: 'Tesla Motors Inc'
+  },
+  {
+    ticker: 'FB',
+    name: 'Facebook'
+  },
+  {
+    ticker: 'Elm',
+   name: 'Elm'
+  }
+];
 
 export default class Expand extends Component {
 	 constructor(props) {
@@ -29,11 +49,13 @@ export default class Expand extends Component {
 		  data: [],
       min: [],
       max: [],
-      value: "FB"
+      suggestions: [],
+      value: 'TSLA'
 		};
-    this.handleChange = this.handleChange.bind(this);
+
   
 	}
+  
 	componentDidMount(){
     var data = []
     var min = []
@@ -77,19 +99,20 @@ export default class Expand extends Component {
     this.setState({zoomDomain: domain});
   }
 
-   handleChange(event) {
-    this.setState({value: event.target.value});
-    this.componentDidMount()
-  }
-
-  
+  onChange (value) {
+		this.setState({
+			value: value,
+		});
+	}
 	
 	render() {
+    
 		return (
 			<div >
 			<div class={style.home}>
         
 			</div>
+     
       <VictoryChart width={1200} height={400} 
         theme={VictoryTheme.material}
         
@@ -99,8 +122,16 @@ export default class Expand extends Component {
             onDomainChange={this.handleZoom.bind(this)}/>}*/
             containerComponent={<VictoryVoronoiContainer dimension="x"/>}
             >
+           <VictoryLabel x={50} y={24} style={{textAnchor: "start",
+              verticalAnchor: "end",
+              fill: "#000000",
+              fontFamily: "inherit",
+              fontSize: "20px",
+              fontWeight: "bold"}}
+                text={this.state.value}
+              />
         <VictoryArea
-      
+        
        domain={{ y: [this.state.min*0.99, this.state.max*1.01]}}
         style={{
             data: {stroke: "tomato", opacity: 0.7, fill:"lightblue"},
@@ -127,9 +158,13 @@ export default class Expand extends Component {
        
             
       </VictoryChart> 
-     
-          <input type="text"  value={this.state.value} onChange={this.handleChange} />
-         <Dropdown options={options} value={defaultOption} placeholder="Select an option" />
+     <Select
+          name="form-field-name"
+          value="one"
+          options={languages}
+          onChange={this.onChange}
+        />
+         
       {/*<VictoryChart
             padding={{top: 0, left: 65,  bottom: 30}}
             width={1000} height={100}  
