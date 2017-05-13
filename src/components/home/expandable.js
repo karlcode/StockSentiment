@@ -51,7 +51,7 @@ const getSuggestions = value => {
 // When suggestion is clicked, Autosuggest needs to populate the input element
 // based on the clicked suggestion. Teach Autosuggest how to calculate the
 // input value for every given suggestion.
-const getSuggestionValue = suggestion => suggestion.name;
+const getSuggestionValue = suggestion => suggestion.ticker;
 
 // Use your imagination to render suggestions.
 const renderSuggestion = suggestion => (
@@ -68,7 +68,7 @@ export default class Expand extends Component {
       min: [],
       max: [],
       suggestions: [],
-      value: 'TSLA'
+      value: ''
 		};
 
   
@@ -116,10 +116,22 @@ export default class Expand extends Component {
   handleBrush(domain) {
     this.setState({zoomDomain: domain});
   }
-   onChange = (event, { newValue }) => {
-    this.setState({
+   onChange = (event, { newValue, method }) => {
+    switch (method){
+      case 'type':
+      this.setState({
       value: newValue
-    });
+      });
+      break
+      case 'click':
+      this.setState({
+      value: newValue
+      });
+      this.componentDidMount()
+      break
+      default:
+      break
+    }
   };
 
   // Autosuggest will call this function every time you need to update suggestions.
@@ -143,7 +155,7 @@ export default class Expand extends Component {
 
     // Autosuggest will pass through all these props to the input element.
     const inputProps = {
-      placeholder: 'Type a programming language',
+      placeholder: 'Type in a ticker',
       value,
       onChange: this.onChange
     };
