@@ -1,9 +1,8 @@
 import { h, Component } from 'preact';
 import style from './style.less';
 import {VictoryLabel, VictoryArea, VictoryTheme, VictoryTooltip, VictoryVoronoiContainer, VictoryAxis, VictoryBrushContainer, VictoryZoomContainer, VictoryCandlestick, VictoryChart, VictoryLine } from 'victory';
-import Select from 'react-select';
-import 'react-select/dist/react-select.css';
-
+import Autosuggest from 'react-autosuggest';
+import theme from './style.less';
 var data2 = [
     {x: 3, open: 5, close: 10, high: 15, low: 0},
     {x: 2, open: 10, close: 15, high: 20, low: 5},
@@ -40,7 +39,26 @@ const languages = [
    name: 'Elm'
   }
 ];
+const getSuggestions = value => {
+  const inputValue = value.trim().toLowerCase();
+  const inputLength = inputValue.length;
 
+  return inputLength === 0 ? [] : languages.filter(lang =>
+    lang.name.toLowerCase().slice(0, inputLength) === inputValue
+  );
+};
+
+// When suggestion is clicked, Autosuggest needs to populate the input element
+// based on the clicked suggestion. Teach Autosuggest how to calculate the
+// input value for every given suggestion.
+const getSuggestionValue = suggestion => suggestion.name;
+
+// Use your imagination to render suggestions.
+const renderSuggestion = suggestion => (
+  <div>
+    {suggestion.name}
+  </div>
+);
 export default class Expand extends Component {
 	 constructor(props) {
      super(props);
@@ -98,15 +116,37 @@ export default class Expand extends Component {
   handleBrush(domain) {
     this.setState({zoomDomain: domain});
   }
+   onChange = (event, { newValue }) => {
+    this.setState({
+      value: newValue
+    });
+  };
 
-  onChange (value) {
-		this.setState({
-			value: value,
-		});
-	}
+  // Autosuggest will call this function every time you need to update suggestions.
+  // You already implemented this logic above, so just use it.
+  onSuggestionsFetchRequested = ({ value }) => {
+    this.setState({
+      suggestions: getSuggestions(value)
+    });
+  };
+
+  // Autosuggest will call this function every time you need to clear suggestions.
+  onSuggestionsClearRequested = () => {
+    this.setState({
+      suggestions: []
+    });
+  };
+
 	
 	render() {
-    
+     const { value, suggestions } = this.state;
+
+    // Autosuggest will pass through all these props to the input element.
+    const inputProps = {
+      placeholder: 'Type a programming language',
+      value,
+      onChange: this.onChange
+    };
 		return (
 			<div >
 			<div class={style.home}>
@@ -158,12 +198,15 @@ export default class Expand extends Component {
        
             
       </VictoryChart> 
-     <Select
-          name="form-field-name"
-          value="one"
-          options={languages}
-          onChange={this.onChange}
-        />
+      <Autosuggest
+        theme={theme}
+        suggestions={suggestions}
+        onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+        onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+        getSuggestionValue={getSuggestionValue}
+        renderSuggestion={renderSuggestion}
+        inputProps={inputProps}
+      />
          
       {/*<VictoryChart
             padding={{top: 0, left: 65,  bottom: 30}}
